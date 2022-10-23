@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kboughal <kboughal@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/23 16:42:19 by kboughal          #+#    #+#             */
+/*   Updated: 2022/10/23 16:42:19 by kboughal         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 char	*ft_get_sticky(int fd, char *sticky)
@@ -12,7 +24,7 @@ char	*ft_get_sticky(int fd, char *sticky)
 	while (!ft_new_line(sticky) && read_bytes)
 	{
 		read_bytes = read(fd, buf, BUFFER_SIZE);
-		if(read_bytes < 0)
+		if (read_bytes < 0)
 		{
 			free(buf);
 			return (NULL);
@@ -25,14 +37,38 @@ char	*ft_get_sticky(int fd, char *sticky)
 	free(buf);
 	return (sticky);
 }
-#include <stdio.h>
+
+char	*ft_remove_excess(char *str)
+{
+	char	*line;
+	int		i;
+
+	i = 0;
+	if (!str[0])
+		return (NULL);
+	while (str[i] != '\0' && str[i] != '\n')
+		i++;
+	line = (char *)malloc(sizeof(char) * (i + 2));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (str[i] != '\0' && str[i] != '\n')
+	{
+		line[i] = str[i];
+		i++;
+	}
+	if (str[i] == '\n')
+		line[i++] = '\n';
+	line[i] = '\0';
+	return (line);
+}
 
 char	*get_next_line(int fd)
 {
-	static char	*sticky;
+	static char			*sticky;
 	char				*line;
 
-	if(fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE < 0)
 		return (NULL);
 	sticky = ft_get_sticky(fd, sticky);
 	if (!sticky)
@@ -41,28 +77,3 @@ char	*get_next_line(int fd)
 	sticky = ft_get_new_sticky(sticky);
 	return (line);
 }
-
-/*
-int main()
-{
-	char	*line;
-	int		fd;
-
-	fd = open("test/text1.txt", O_RDONLY);
-	if(fd < 0)
-		return (0);
-	while (1)
-	{
-		line = get_next_line(fd);
-		printf("%s", line);
-		if (!line)
-		{
-			free(line);
-			break;
-		}
-		free(line);
-	}
-	
-	close(fd);
-	return (0);
-}*/
