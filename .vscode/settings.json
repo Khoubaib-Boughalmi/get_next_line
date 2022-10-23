@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"*.todo": "dockercompose",
+		"get_next_line.h": "c",
+		"stdio.h": "c"
+	}
+}
